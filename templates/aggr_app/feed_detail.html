@@ -1,0 +1,19 @@
+<html>
+    <head>
+        <title>Aggr - {{ feed.name }}</title>
+    </head>
+    <body>
+        <h1>Aggr</h1>
+        <h2>{{ feed.name }}</h2>
+        <h3>{{ feed.cache.feed.title }}</h3>
+        <ul>
+        {% for entry in feed.cache.entries %}
+            <li><h4><a href="{{ entry.link }}">{{ entry.title }}</a></h4>
+                <p>{{ entry.summary|safe }}</p></li>
+        {% endfor %}
+        {% load url from future %}
+        <form method="GET" action="{% url 'aggr_app.views.confirm_delete_feed' feed.id %}">
+        <input type="submit" name="delete" value="Delete Feed">
+        </form>
+    </body>
+</html>

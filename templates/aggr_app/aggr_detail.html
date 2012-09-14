@@ -1,0 +1,15 @@
+<html>
+    <head>
+        <title>Aggr - Feeds and Aggregates</title>
+    </head>
+    <body>
+        <h1>Aggr</h1>
+        <h2>{{ aggr.name }}</h2>
+        <ul>
+        {% for entry in aggr.items %}
+            <li><h4><a href="{{ entry.link }}">{{ entry.title }}</a></h4>
+                <p>{{ entry.summary|safe }}</p></li>
+        {% endfor %}
+        </ul>
+    </body>
+</html>

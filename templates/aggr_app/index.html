@@ -1,0 +1,28 @@
+<html>
+    <head>
+        <title>Aggr - Feeds and Aggregates</title>
+    </head>
+    <body>
+        <h1>Aggr</h1>
+        {% if feed_list %}
+            <h2>Feeds</h2>
+            <ul>
+            {% for feed in feed_list %}
+                <li><a href="/feed/{{ feed.pk }}/">{{ feed.name }}</a></li>
+            {% endfor %}
+            </ul>
+        {% else %}
+            <p>No feeds have been created.</p>
+        {% endif %}
+        {% if aggr_list %}
+            <h2>Aggregates</h2>
+            <ul>
+            {% for aggr in aggr_list %}
+                <li><a href="/aggr/{{ aggr.pk }}/">{{ aggr.name }}</a></li>
+            {% endfor %}
+            </ul>
+        {% else %}
+            <p>No aggregates have been created.</p>
+        {% endif %}
+    </body>
+</html>
