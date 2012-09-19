@@ -1,0 +1,24 @@
+<html>
+    <head>
+        <title>Aggr - New Aggregate</title>
+    </head>
+    <body>
+        <h1>Aggr</h1>
+        <h2>New Aggregate</h2>
+        {% if error_message %}<p><strong>{{ error_message }}</strong></p>{% endif %}
+        {% load url from future %}
+        <form action="{% url 'aggr_app.views.create_new_aggr' %}" method="post">
+        {% csrf_token %}
+        <label for="name">Aggregate Name</label> <input type="text" name="name" id="0" /><br />
+        <label for="feeds">Feeds</label>
+        <select name="feeds" multiple="true" size="6">
+        {% for feed in feed_list %}
+            <option value="{{ feed.id }}">{{ feed.name }}</option>
+        {% endfor %}
+        </select><br />
+        <label for="filters">Filters</label>
+        <textarea name="filters" cols="50" rows="10"></textarea><br />
+        <input type="submit" value="Create" />
+        </form>
+    </body>
+</html>

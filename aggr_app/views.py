@@ -12,8 +12,7 @@ def index(request):
 
 def feed_detail(request, feed_id):
     feed = get_object_or_404(Feed, pk=feed_id)
-    feed.get_cache_or_refresh()
-    feed.save()
+    feed.update_cache()
     return render_to_response('aggr_app/feed_detail.html', {'feed': feed})
 
 def new_feed(request):
@@ -51,8 +50,23 @@ def aggr_detail(request, aggr_id):
     return render_to_response('aggr_app/aggr_detail.html', {'aggr': aggr})
 
 def new_aggr(request):
-    # aggr POST stuff
-    pass
+    feed_list = Feed.objects.all().order_by("name")
+    return render_to_response('aggr_app/new_aggr.html', {'feed_list': feed_list}, context_instance=RequestContext(request))
 
 def create_new_aggr(request):
-    pass
+    try:
+        print "trying"
+        feed_ids = request.POST.getlist('feeds')
+        feeds = Feed.objects.filter(id__in=feed_ids)
+        aggr = Aggregate(name=request.POST['name'], filters=request.POST['filters'])
+        print feed_ids
+    except KeyError:
+        print "error"
+        return render_to_response('aggr_app/new_aggr.html', {'error_message': 'Something is missing.'}, context_instance=RequestContext(request))
+    else:
+        aggr.save()
+        aggr.feeds = feeds
+        aggr.save()
+        print "success"
+        return HttpResponseRedirect(reverse('aggr_app.views.aggr_detail', args=(aggr.id,)))
+        
