@@ -47,6 +47,7 @@ def delete_feed(request, feed_id):
 def aggr_detail(request, aggr_id):
     aggr = get_object_or_404(Aggregate, pk=aggr_id)
     aggr.get_unfiltered_items()
+    aggr.apply_filters()
     return render_to_response('aggr_app/aggr_detail.html', {'aggr': aggr})
 
 def new_aggr(request):
