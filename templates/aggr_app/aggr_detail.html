@@ -11,5 +11,9 @@
                 <p>{{ entry.summary|safe }}</p></li>
         {% endfor %}
         </ul>
+        {% load url from future %}
+        <form method="GET" action="{% url 'aggr_app.views.delete_aggr' aggr.id %}">
+        <input type="submit" name="delete" value="Delete Aggregate">
+        </form>
     </body>
 </html>
