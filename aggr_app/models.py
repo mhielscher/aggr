@@ -9,7 +9,7 @@ import urllib2
 import re
 import logging
 
-logger = logging.getLogger('aggr_debug')
+logger = logging.getLogger(__name__)
 
 web_timestamp_format = "%a, %d %b %Y %H:%M:%S %Z"
 
