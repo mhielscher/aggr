@@ -33,6 +33,9 @@ class Feed(models.Model):
         print "Updating cache of %s:%d." % (self.name, self.id)
         conditional_request = urllib2.Request(self.url)
         if not force:
+            if timezone.now() < self.last_updated + self.minimum_refresh_time:
+                print "Not updating, minimum refresh time not passed."
+                return self.cache
             conditional_request.add_header('If-Modified-Since', self.last_updated.strftime(web_timestamp_format))
         try:
             response = urllib2.urlopen(conditional_request)
@@ -42,7 +45,7 @@ class Feed(models.Model):
             else:
                 return self.cache
         
-        if response.getcode() == 200 && timezone.now() > self.last_updated + self.minimum_refresh_time:
+        if response.getcode() == 200:
             print "Cache will be updated."
             last_modified = response.headers.get('Last-Modified')
             if last_modified:
