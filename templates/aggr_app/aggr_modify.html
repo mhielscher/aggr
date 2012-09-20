@@ -1,0 +1,20 @@
+{% extends "aggr_app/base.html" %}
+{% block title %}Modify Aggregate{% endblock %}
+{% block content %}
+<h2>New Aggregate</h2>
+{% if error_message %}<p><strong>{{ error_message }}</strong></p>{% endif %}
+{% load url from future %}
+<form action="{% url 'aggr_app.views.modify_aggr' aggr.id %}" method="post">
+{% csrf_token %}
+<label for="name">Aggregate Name</label> <input type="text" name="name" value="{{ aggr.name }}" id="0" /><br />
+<label for="feeds">Feeds</label>
+<select name="feeds" multiple="true" size="6" id="1">
+{% for feed in feed_list %}
+    <option value="{{ feed.id }}" {% if feed in aggr.feeds.all %}selected="true"{% endif %}>{{ feed.name }}</option>
+{% endfor %}
+</select><br />
+<label for="filters">Filters</label>
+<textarea name="filters" cols="50" rows="10" id="2">{{ aggr.filters }}</textarea><br />
+<input type="submit" value="Create" />
+</form>
+{% endblock content %}

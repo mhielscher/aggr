@@ -32,7 +32,7 @@ def new_feed(request):
         try:
             feed = Feed(name=request.POST['name'], url=request.POST['url'])
         except KeyError:
-            return render(request, 'aggr_app/feed_new.html', {'error_message': 'Something is missing.'}, context_instance=RequestContext(request))
+            return render(request, 'aggr_app/feed_new.html', {'error_message': 'Something is missing.'})
         else:
             feed.save()
             return HttpResponseRedirect(reverse('aggr_app.views.feed_detail', args=(feed.id,)))
@@ -45,7 +45,7 @@ def delete_feed(request, feed_id):
     """
     if request.method == 'GET':
         feed = Feed.objects.get(pk=feed_id)
-        return render(request, 'aggr_app/feed_delete.html', {'feed': feed}, context_instance=RequestContext(request))
+        return render(request, 'aggr_app/feed_delete.html', {'feed': feed})
     elif request.method == 'POST':
         try:
             if feed_id != request.POST['feed_id']:
@@ -54,7 +54,7 @@ def delete_feed(request, feed_id):
                 return HttpResponseRedirect(reverse('aggr_app.views.feed_detail', args=(feed_id,)))
             feed = Feed.objects.get(pk=feed_id)
         except KeyError:
-            return render(request, 'aggr_app/feed_delete.html', {'feed': Feed.objects.get(pk=feed_id), 'error_message': 'Something is missing.'}, context_instance=RequestContext(request))
+            return render(request, 'aggr_app/feed_delete.html', {'feed': Feed.objects.get(pk=feed_id), 'error_message': 'Something is missing.'})
         else:
             feed.delete()
             return HttpResponseRedirect(reverse('aggr_app.views.index'))
@@ -74,7 +74,7 @@ def new_aggr(request):
     """
     if request.method == 'GET':
         feed_list = Feed.objects.all().order_by("name")
-        return render(request, 'aggr_app/aggr_new.html', {'feed_list': feed_list}, context_instance=RequestContext(request))
+        return render(request, 'aggr_app/aggr_new.html', {'feed_list': feed_list})
     elif request.method == 'POST':
         try:
             logger.debug("trying")
@@ -84,14 +84,39 @@ def new_aggr(request):
             logger.debug(feed_ids)
         except KeyError:
             logger.debug("error")
-            return render(request, 'aggr_app/aggr_new.html', {'error_message': 'Something is missing.'}, context_instance=RequestContext(request))
+            return render(request, 'aggr_app/aggr_new.html', {'error_message': 'Something is missing.'})
         else:
             aggr.save()
             aggr.feeds = feeds
             aggr.save()
             logger.debug("success")
             return HttpResponseRedirect(reverse('aggr_app.views.aggr_detail', args=(aggr.id,)))
-
+            
+def modify_aggr(request, aggr_id):
+    """Modify an Aggregate.
+    
+    GET: Display modification form.
+    POST: Modify the Aggregate.
+    """
+    if request.method == 'GET':
+        aggr = Aggregate.objects.get(pk=aggr_id)
+        feed_list = Feed.objects.all().order_by("name")
+        feed_ids = [feed.id for feed in aggr.feeds.all()]
+        return render(request, 'aggr_app/aggr_modify.html', {'aggr': aggr, 'feed_ids': feed_ids, 'feed_list': feed_list})
+    elif request.method == 'POST':
+        try:
+            aggr = Aggregate.objects.get(pk=aggr_id)
+            feed_ids = request.POST.getlist('feeds')
+            feeds = Feed.objects.filter(id__in=feed_ids)
+            aggr.name = request.POST['name']
+            aggr.feeds = feeds
+            aggr.filters = request.POST['filters']
+        except KeyError:
+            return render(request, 'aggr_app/aggr_new.html', {'error_message': 'Something is missing.'})
+        else:
+            aggr.save()
+            return HttpResponseRedirect(reverse('aggr_app.views.aggr_detail', args=(aggr.id,)))
+            
 def delete_aggr(request, aggr_id):
     """Confirm (GET) and delete (POST) an Aggregate.
     
@@ -100,7 +125,7 @@ def delete_aggr(request, aggr_id):
     """
     if request.method == 'GET':
         aggr = Aggregate.objects.get(pk=aggr_id)
-        return render(request, 'aggr_app/aggr_delete.html', {'aggr': aggr}, context_instance=RequestContext(request))
+        return render(request, 'aggr_app/aggr_delete.html', {'aggr': aggr})
     elif request.method == 'POST':
         try:
             if aggr_id != request.POST['aggr_id']:
