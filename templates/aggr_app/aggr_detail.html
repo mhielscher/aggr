@@ -1,19 +1,14 @@
-<html>
-    <head>
-        <title>Aggr - Feeds and Aggregates</title>
-    </head>
-    <body>
-        <h1>Aggr</h1>
-        <h2>{{ aggr.name }}</h2>
-        <ul>
-        {% for entry in aggr.items %}
-            <li><h4><a href="{{ entry.link }}">{{ entry.title }}</a></h4>
-                <p>{{ entry.summary|safe }}</p></li>
-        {% endfor %}
-        </ul>
-        {% load url from future %}
-        <form method="GET" action="{% url 'aggr_app.views.delete_aggr' aggr.id %}">
-        <input type="submit" name="delete" value="Delete Aggregate">
-        </form>
-    </body>
-</html>
+{% extends "aggr_app/base.html" %}
+{% block content %}
+<h2>{{ aggr.name }}</h2>
+<ul>
+{% for entry in aggr.items %}
+    <li><h4><a href="{{ entry.link }}">{{ entry.title }}</a></h4>
+        <p>{{ entry.summary|safe }}</p></li>
+{% endfor %}
+</ul>
+{% load url from future %}
+<form method="GET" action="{% url 'aggr_app.views.delete_aggr' aggr.id %}">
+<input type="submit" name="delete" value="Delete Aggregate">
+</form>
+{% endblock content %}

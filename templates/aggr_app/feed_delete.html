@@ -1,18 +1,13 @@
-<html>
-    <head>
-        <title>Aggr - Delete Feed</title>
-    </head>
-    <body>
-        <h1>Aggr</h1>
-        <h2>Delete Feed</h2>
-        {% if error_message %}<p><strong>{{ error_message }}</strong></p>{% endif %}
-        <p><strong>Are you sure you want to delete the feed "{{ feed.name }}"?</strong></p>
-        {% load url from future %}
-        <form action="{% url 'aggr_app.views.delete_feed' feed.id %}" method="post">
-        {% csrf_token %}
-        <input type="hidden" name="feed_id" value="{{ feed.id }}" />
-        <input type="submit" name="confirm" value="Delete" />
-        <input type="submit" name="confirm" value="Cancel" />
-        </form>
-    </body>
-</html>
+{% extends "aggr_app/base.html" %}
+{% block content %}
+<h2>Delete Feed</h2>
+{% if error_message %}<p><strong>{{ error_message }}</strong></p>{% endif %}
+<p><strong>Are you sure you want to delete the feed "{{ feed.name }}"?</strong></p>
+{% load url from future %}
+<form action="{% url 'aggr_app.views.delete_feed' feed.id %}" method="post">
+{% csrf_token %}
+<input type="hidden" name="feed_id" value="{{ feed.id }}" />
+<input type="submit" name="confirm" value="Delete" />
+<input type="submit" name="confirm" value="Cancel" />
+</form>
+{% endblock content %}

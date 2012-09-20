@@ -1,7 +1,7 @@
 from aggr_app.models import Feed, Aggregate
 from django.core.urlresolvers import reverse
 from django.http import HttpResponse, HttpResponseRedirect
-from django.shortcuts import render_to_response, get_object_or_404
+from django.shortcuts import render, render_to_response, get_object_or_404
 from django.template import RequestContext
 import feedparser
 
@@ -9,7 +9,7 @@ def index(request):
     """Lists all Feeds and Aggregates by name."""
     feed_list = Feed.objects.all().order_by('-last_updated')
     aggr_list = Aggregate.objects.all().order_by('-name')
-    return render_to_response('aggr_app/index.html', {'feed_list': feed_list, 'aggr_list': aggr_list})
+    return render(request, 'aggr_app/index.html', {'feed_list': feed_list, 'aggr_list': aggr_list})
 
 def feed_detail(request, feed_id):
     """Displays all entries in a given feed."""
