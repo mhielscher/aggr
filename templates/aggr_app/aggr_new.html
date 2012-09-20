@@ -4,7 +4,7 @@
 <h2>New Aggregate</h2>
 {% if error_message %}<p><strong>{{ error_message }}</strong></p>{% endif %}
 {% load url from future %}
-<form action="{% url 'aggr_app.views.create_new_aggr' %}" method="post">
+<form action="{% url 'aggr_app.views.new_aggr' %}" method="post">
 {% csrf_token %}
 <label for="name">Aggregate Name</label> <input type="text" name="name" id="0" /><br />
 <label for="feeds">Feeds</label>

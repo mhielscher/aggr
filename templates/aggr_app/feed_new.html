@@ -4,7 +4,7 @@
 <h2>New Feed</h2>
 {% if error_message %}<p><strong>{{ error_message }}</strong></p>{% endif %}
 {% load url from future %}
-<form action="{% url 'aggr_app.views.create_new_feed' %}" method="post">
+<form action="{% url 'aggr_app.views.new_feed' %}" method="post">
 {% csrf_token %}
 <label for="name">Feed Name</label> <input type="text" name="name" id="0" /><br />
 <label for="url">URL</label> <input type="text" name="url" id="1" /><br />
