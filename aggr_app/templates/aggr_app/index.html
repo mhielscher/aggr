@@ -2,8 +2,8 @@
 {% block title %}Index{% endblock %}
 {% block content %}
 {% load url from future %}
+<h2>Feeds</h2> <a href="{% url 'aggr_app.views.new_feed' %}">New</a>
 {% if feed_list %}
-    <h2>Feeds</h2> <a href="{% url 'aggr_app.views.new_feed' %}">New</a>
     <ul>
     {% for feed in feed_list %}
         <li><a href="{% url 'aggr_app.views.feed_detail' feed.id %}">{{ feed.name }}</a></li>
@@ -12,8 +12,8 @@
 {% else %}
     <p>No feeds have been created.</p>
 {% endif %}
+<h2>Aggregates</h2> <a href="{% url 'aggr_app.views.new_aggr' %}">New</a>
 {% if aggr_list %}
-    <h2>Aggregates</h2> <a href="{% url 'aggr_app.views.new_aggr' %}">New</a>
     <ul>
     {% for aggr in aggr_list %}
         <li><a href="{% url 'aggr_app.views.aggr_detail' aggr.id %}">{{ aggr.name }}</a></li>
