@@ -9,6 +9,6 @@ urlpatterns = patterns('aggr_app.views',
     url(r'^feed/(?P<feed_id>\d+)/delete/$', 'delete_feed'),
     url(r'^aggr/(?P<aggr_id>\d+)/$', 'aggr_detail'),
     url(r'^aggr/new/$', 'new_aggr'),
-    url(r'^aggr/(?P<aggr_id>\d+)/modify/$', 'modify_aggr'),
+    url(r'^aggr/(?P<aggr_id>\d+)/modify/$', 'new_aggr'),
     url(r'^aggr/(?P<aggr_id>\d+)/delete/$', 'delete_aggr'),
 )

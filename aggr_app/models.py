@@ -55,10 +55,11 @@ class Feed(models.Model):
             # Feed has been successfully downloaded.
             logger.debug("Cache will be updated.")
             last_modified = response.headers.get('Last-Modified')
-            if last_modified:
-                self.last_updated = parser.parse(last_modified)
-            else:
-                self.last_updated = timezone.now()
+            #if last_modified:
+            #    self.last_updated = parser.parse(last_modified)
+            #else:
+            #    self.last_updated = timezone.now()
+            self.last_updated = timezone.now()
             logger.debug("New Last-Modified=%s" % (last_modified))
             logger.debug("Setting last_updated=%s" % (self.last_updated))
             if response.headers.get('Expires'):
@@ -118,16 +119,18 @@ class Aggregate(models.Model):
     
     def apply_filters(self):
         """Compiles filters, returns matching entries."""
-        items = set()
+        items = []
         for feed in self.feeds.all():
             if feed.re_filter == "":
-                items |= set(feed.feed.update_cache().entries)
+                items.extend((e for e in feed.feed.update_cache().entries if e not in items))
             else:
                 compiled_re = feed.compiled_filter()
                 for entry in feed.feed.update_cache().entries:
                     if compiled_re.search(entry.title) or compiled_re.search(entry.summary):
-                        items.add(entry)
-        self.items = list(items)
-        self.items.sort(key=lambda e: e.get('published_parsed') or e.get('updated_parsed'))
+                        if entry not in items:
+                            logger.debug("Adding %s" % entry.title)
+                            items.append(entry)
+        # Sort by descending published date.
+        self.items = sorted(items, key=lambda e: e.get('published_parsed') or e.get('updated_parsed'))
         return self.items
 

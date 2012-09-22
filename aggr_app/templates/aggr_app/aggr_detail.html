@@ -9,10 +9,10 @@
 {% endfor %}
 </ul>
 {% load url from future %}
-<form method="GET" action="{% url 'aggr_app.views.modify_aggr' aggr.id %}">
-<input type="submit" name="modify" value="Edit">
+<form method="GET" action="{% url 'aggr_app.views.new_aggr' aggr.id %}">
+<input type="submit" value="Edit">
 </form>
 <form method="GET" action="{% url 'aggr_app.views.delete_aggr' aggr.id %}">
-<input type="submit" name="delete" value="Delete">
+<input type="submit" value="Delete">
 </form>
 {% endblock content %}

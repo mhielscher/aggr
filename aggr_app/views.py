@@ -66,18 +66,33 @@ def aggr_detail(request, aggr_id):
     aggr.apply_filters()
     return render(request, 'aggr_app/aggr_detail.html', {'aggr': aggr})
 
-def new_aggr(request):
+def new_aggr(request, aggr_id=None):
     """Create a new Aggregate.
     
     GET: display the new aggr form.
     POST: attempt to create the new aggr.
     """
+    logger.debug("aggr_id=%s" % aggr_id)
     if request.method == 'GET':
         feed_list = Feed.objects.all().order_by("name")
-        return render(request, 'aggr_app/aggr_new.html', {'feed_list': feed_list})
+        if aggr_id:
+            aggr = Aggregate.objects.get(pk=aggr_id)
+        else:
+            aggr = None
+        return render(request, 'aggr_app/aggr_new.html', {'feed_list': feed_list, 'aggr': aggr})
     elif request.method == 'POST':
         try:
             logger.debug("trying")
+            if aggr_id:
+                logger.debug("Modifying existing Aggr id=%s" % aggr_id)
+                aggr = Aggregate.objects.get(pk=aggr_id)
+                # Delete all existing filters and remake them later.
+                for feed in aggr.feeds.all():
+                    feed.delete()
+            else:
+                logger.debug("Creating new Aggr")
+                aggr = Aggregate(name=request.POST['name'])
+                
             num_filters = max([int(f[len('feed')]) for f in request.POST.keys() if f.find('feed')==0])+1
             feed_filters = []
             for (feed, feed_filter) in (('feed%d'%i, 'filter%d'%i) for i in range(num_filters)):
@@ -86,41 +101,17 @@ def new_aggr(request):
                 filtered_feed = FilteredFeed(feed=feed_obj, re_filter=request.POST[feed_filter])
                 filtered_feed.save()
                 feed_filters.append(filtered_feed)
-            aggr = Aggregate(name=request.POST['name'])
         except KeyError as e:
             logger.debug("error: %s", e.message)
             return render(request, 'aggr_app/aggr_new.html', {'error_message': 'Something is missing.'})
         else:
-            aggr.save()
-            print feed_filters
+            # Pre-save the model before we can use the ManyToManyField.
+            if not aggr_id:
+                aggr.save()
+            logger.debug(feed_filters)
             aggr.feeds = feed_filters
             aggr.save()
             logger.debug("success")
-            return HttpResponseRedirect(reverse('aggr_app.views.aggr_detail', args=(aggr.id,)))
-            
-def modify_aggr(request, aggr_id):
-    """Modify an Aggregate.
-    
-    GET: Display modification form.
-    POST: Modify the Aggregate.
-    """
-    if request.method == 'GET':
-        aggr = Aggregate.objects.get(pk=aggr_id)
-        feed_list = Feed.objects.all().order_by("name")
-        feed_ids = [feed.id for feed in aggr.feeds.all()]
-        return render(request, 'aggr_app/aggr_modify.html', {'aggr': aggr, 'feed_ids': feed_ids, 'feed_list': feed_list})
-    elif request.method == 'POST':
-        try:
-            aggr = Aggregate.objects.get(pk=aggr_id)
-            feed_ids = request.POST.getlist('feeds')
-            feeds = Feed.objects.filter(id__in=feed_ids)
-            aggr.name = request.POST['name']
-            aggr.feeds = feeds
-            aggr.filters = request.POST['filters']
-        except KeyError:
-            return render(request, 'aggr_app/aggr_new.html', {'error_message': 'Something is missing.'})
-        else:
-            aggr.save()
             return HttpResponseRedirect(reverse('aggr_app.views.aggr_detail', args=(aggr.id,)))
             
 def delete_aggr(request, aggr_id):
@@ -142,6 +133,8 @@ def delete_aggr(request, aggr_id):
         except KeyError:
             return render(request, 'aggr_app/aggr_delete.html', {'aggr': Aggregate.objects.get(pk=aggr_id), 'error_message': 'Something is missing.'}, context_instance=RequestContext(request))
         else:
+            for feed in aggr.feeds.all():
+                feed.delete()
             aggr.delete()
             return HttpResponseRedirect(reverse('aggr_app.views.index'))
 
