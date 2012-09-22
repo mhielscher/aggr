@@ -1,4 +1,4 @@
-from aggr_app.models import Feed, Aggregate
+from aggr_app.models import Feed, FilteredFeed, Aggregate
 from django.core.urlresolvers import reverse
 from django.http import HttpResponse, HttpResponseRedirect
 from django.shortcuts import render, render_to_response, get_object_or_404
@@ -62,7 +62,7 @@ def delete_feed(request, feed_id):
 def aggr_detail(request, aggr_id):
     """Shows all entries (filtered) in a given Aggregate."""
     aggr = get_object_or_404(Aggregate, pk=aggr_id)
-    aggr.get_unfiltered_items()
+    #aggr.get_unfiltered_items()
     aggr.apply_filters()
     return render(request, 'aggr_app/aggr_detail.html', {'aggr': aggr})
 
@@ -78,16 +78,22 @@ def new_aggr(request):
     elif request.method == 'POST':
         try:
             logger.debug("trying")
-            feed_ids = request.POST.getlist('feeds')
-            feeds = Feed.objects.filter(id__in=feed_ids)
-            aggr = Aggregate(name=request.POST['name'], filters=request.POST['filters'])
-            logger.debug(feed_ids)
-        except KeyError:
-            logger.debug("error")
+            num_filters = max([int(f[len('feed')]) for f in request.POST.keys() if f.find('feed')==0])+1
+            feed_filters = []
+            for (feed, feed_filter) in (('feed%d'%i, 'filter%d'%i) for i in range(num_filters)):
+                feed_obj = Feed.objects.get(pk=request.POST[feed])
+                logger.debug(feed_obj)
+                filtered_feed = FilteredFeed(feed=feed_obj, re_filter=request.POST[feed_filter])
+                filtered_feed.save()
+                feed_filters.append(filtered_feed)
+            aggr = Aggregate(name=request.POST['name'])
+        except KeyError as e:
+            logger.debug("error: %s", e.message)
             return render(request, 'aggr_app/aggr_new.html', {'error_message': 'Something is missing.'})
         else:
             aggr.save()
-            aggr.feeds = feeds
+            print feed_filters
+            aggr.feeds = feed_filters
             aggr.save()
             logger.debug("success")
             return HttpResponseRedirect(reverse('aggr_app.views.aggr_detail', args=(aggr.id,)))

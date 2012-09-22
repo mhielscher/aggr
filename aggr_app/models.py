@@ -85,12 +85,21 @@ class Feed(models.Model):
             logger.debug("Cache not updating, code %d" % (response.getcode()))
         return self.cache
 
+class FilteredFeed(models.Model):
+    feed = models.ForeignKey(Feed)
+    re_filter = models.CharField(max_length=400, null=True)
+    
+    def __unicode__(self):
+        return u"%s: %s" % (self.feed, self.re_filter)
+    
+    def compiled_filter(self):
+        return re.compile(self.re_filter)
+
 
 class Aggregate(models.Model):
     """Aggregates feeds into a unified, (soon to be) filtered aggregate feed."""
     name = models.CharField(max_length=100)
-    feeds = models.ManyToManyField(Feed)
-    filters = models.TextField(default="", null=True)
+    feeds = models.ManyToManyField(FilteredFeed)
     items = PickledObjectField(default=[])
     
     def __unicode__(self):
@@ -98,24 +107,27 @@ class Aggregate(models.Model):
     
     def get_unfiltered_items(self):
         """Returns all items in the component feeds, sorted by published timestamp."""
-        feeds = [f.update_cache() for f in self.feeds.all()]
+        feeds = [f.feed.update_cache() for f in self.feeds.all()]
         # Add the feed name to each entry for annotation.
-        for f in feeds:
-            for e in f.entries:
-                e['feed'] = f.feed
+        for feed in feeds:
+            for entry in feed.entries:
+                entry['feed'] = feed.feed
         self.items = [e for f in feeds for e in f.entries]
         self.items.sort(key=lambda e: e.get('published_parsed') or e.get('updated_parsed'))
         return self.items
     
     def apply_filters(self):
         """Compiles filters, returns matching entries."""
-        compiled_filters = [re.compile(f) for f in self.filters.split("\n")]
-        filtered_items = []
-        for entry in self.items:
-            for regex in compiled_filters:
-                if regex.search(entry.title) or regex.search(entry.summary):
-                    filtered_items.append(entry)
-                    break
-        self.items = filtered_items
-        return filtered_items
+        items = set()
+        for feed in self.feeds.all():
+            if feed.re_filter == "":
+                items |= set(feed.feed.update_cache().entries)
+            else:
+                compiled_re = feed.compiled_filter()
+                for entry in feed.feed.update_cache().entries:
+                    if compiled_re.search(entry.title) or compiled_re.search(entry.summary):
+                        items.add(entry)
+        self.items = list(items)
+        self.items.sort(key=lambda e: e.get('published_parsed') or e.get('updated_parsed'))
+        return self.items
 

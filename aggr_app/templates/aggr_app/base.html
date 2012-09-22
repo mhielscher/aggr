@@ -4,6 +4,8 @@
         <title>{% block title %}{% endblock %} - Aggr</title>
         <!--<link href="{{ STATIC_URL }}css/reset.css" rel="stylesheet" type="text/css" />-->
         <link href="{{ STATIC_URL }}css/base.css" rel="stylesheet" type="text/css" />
+        {% block head %}
+        {% endblock %}
     </head>
     <body>
         {% include "aggr_app/header.html" %}
