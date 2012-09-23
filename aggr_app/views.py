@@ -30,12 +30,17 @@ def new_feed(request):
         return render(request, 'aggr_app/feed_new.html')
     elif request.method == 'POST':
         try:
-            feed = Feed(name=request.POST['name'], url=request.POST['url'])
+            name = request.POST['name']
+            url = request.POST['url']
         except KeyError:
             return render(request, 'aggr_app/feed_new.html', {'error_message': 'Something is missing.'})
         else:
-            feed.save()
-            return HttpResponseRedirect(reverse('aggr_app.views.feed_detail', args=(feed.id,)))
+            if Feed.objects.filter(url=url).exists():
+                return render(request, 'aggr_app/feed_new.html', {'error_message': 'That feed already exists.'})
+            else:
+                feed = Feed(name=name, url=url)
+                feed.save()
+                return HttpResponseRedirect(reverse('aggr_app.views.feed_detail', args=(feed.id,)))
 
 def delete_feed(request, feed_id):
     """Confirm (GET) and delete (POST) an Feed.
