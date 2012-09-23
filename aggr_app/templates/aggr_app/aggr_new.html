@@ -3,6 +3,9 @@
 {% block head %}
 <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.3/jquery.min.js"></script>
 <script type="text/javascript">
+    // Thanks to Charlie Griefer for this jQuery code.
+    // http://charlie.griefer.com/blog/2009/09/17/jquery-dynamically-adding-form-elements/
+    
     $(document).ready(function() {
         $('#btnAdd').click(function() {
             var num     = $('.clonedInput').length - 1; // how many "duplicatable" input fields we currently have

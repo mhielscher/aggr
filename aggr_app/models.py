@@ -39,7 +39,10 @@ class Feed(models.Model):
             if self.cache and timezone.now() < self.last_updated + self.minimum_refresh_time:
                 logger.debug("Not updating, minimum refresh time not passed.")
                 return self.cache
-            conditional_request.add_header('If-Modified-Since', self.last_updated.strftime(web_timestamp_format))
+            conditional_request.add_header(
+                'If-Modified-Since',
+                self.last_updated.strftime(web_timestamp_format)
+            )
         try:
             response = urllib2.urlopen(conditional_request)
         except urllib2.HTTPError as e:
@@ -49,19 +52,23 @@ class Feed(models.Model):
             else:
                 # Some other error. Probably should do something about it,
                 # report it or something, but for now, do nothing.
+                logger.debug("Got %d from %s when trying to update cache." % (e.code, self.url))
                 return self.cache
         
+        # Feed has been successfully downloaded.
         if response.getcode() == 200:
-            # Feed has been successfully downloaded.
             logger.debug("Cache will be updated.")
             last_modified = response.headers.get('Last-Modified')
             #if last_modified:
             #    self.last_updated = parser.parse(last_modified)
             #else:
             #    self.last_updated = timezone.now()
+            
+            # last_updated needs to be the actual update time so that minimum_refresh_time works
             self.last_updated = timezone.now()
             logger.debug("New Last-Modified=%s" % (last_modified))
             logger.debug("Setting last_updated=%s" % (self.last_updated))
+            
             if response.headers.get('Expires'):
                 self.cache_expires = parser.parse(response.headers.get('Expires'))
             else:
@@ -82,8 +89,8 @@ class Feed(models.Model):
             self.cache = feedparser.parse(response.read())
             self.save()
         else:
-            # 304 or an error, do nothing
-            logger.debug("Cache not updating, code %d" % (response.getcode()))
+            # Some kind of redirect? Write a debug message.
+            logger.debug("Cache not updating, code %d, url %s" % (response.getcode(), self.url))
         return self.cache
 
 class FilteredFeed(models.Model):
@@ -98,7 +105,7 @@ class FilteredFeed(models.Model):
 
 
 class Aggregate(models.Model):
-    """Aggregates feeds into a unified, (soon to be) filtered aggregate feed."""
+    """Aggregates feeds into a unified, filtered aggregate feed."""
     name = models.CharField(max_length=100)
     feeds = models.ManyToManyField(FilteredFeed)
     items = PickledObjectField(default=[])
@@ -106,6 +113,7 @@ class Aggregate(models.Model):
     def __unicode__(self):
         return self.name
     
+    # Deprecated, returns duplicates.
     def get_unfiltered_items(self):
         """Returns all items in the component feeds, sorted by published timestamp."""
         feeds = [f.feed.update_cache() for f in self.feeds.all()]
@@ -118,7 +126,7 @@ class Aggregate(models.Model):
         return self.items
     
     def apply_filters(self):
-        """Compiles filters, returns matching entries."""
+        """Compiles filters; returns matching entries."""
         items = []
         for feed in self.feeds.all():
             if feed.re_filter == "":
