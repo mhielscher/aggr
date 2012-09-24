@@ -13,38 +13,99 @@ logger = logging.getLogger(__name__)
 
 web_timestamp_format = "%a, %d %b %Y %H:%M:%S %Z"
 
+class HeadRequest(urllib2.Request):
+    def get_method(self):
+        return "HEAD"
+
 class Feed(models.Model):
     """Models RSS/Atom feeds; parses and caches their contents."""
     name = models.CharField(max_length=100)
     url = models.URLField(max_length=400)
-    cache = PickledObjectField()
     last_updated = models.DateTimeField(auto_now_add=True)
     cache_expires = models.DateTimeField(auto_now_add=True)
+    supports_conditional_get = models.BooleanField(default=False)
+    cache = PickledObjectField()
+    
     minimum_refresh_time = datetime.timedelta(seconds=120)
     
     def __unicode__(self):
         return self.name
     
+    def check_conditional_support(self):
+        """Check if the URL supports conditional GET with If-Modified-Since."""
+        if not self.url:
+            return False
+        request = HeadRequest(self.url)
+        try:
+            response = urllib2.urlopen(request)
+        except urllib2.HTTPError as e:
+            logger.debug("Got %d from %s when trying to test conditional GET." % (e.code, self.url))
+            return False
+        last_modified = response.headers.get('Last-Modified')
+        if not last_modified:
+            # No Last-Modified header means no support for If-Modified-Since.
+            return False
+        
+        request.add_header('If-Modified-Since', last_modified)
+        try:
+            response = urllib2.urlopen(request)
+        except urllib2.HTTPError as e:
+            if e.code == 304:
+                # 304 Not Modified. Supports conditional GET.
+                logger.debug("Conditional GET supported on %s." % (self.name))
+                return True
+            else:
+                # Some other error. Probably should do something about it,
+                # report it or something, but for now, do nothing.
+                logger.debug("Got %d from %s when trying to test conditional GET." % (e.code, self.url))
+                return False
+        else:
+            # Most likely got a 200 OK. Conditional GET is not supported.
+            logger.debug("Conditional GET *not* supported on %s." % (self.name))
+            return False
+    
     def update_cache(self, force=False):
         """Fetches and parses the feed if it has updated.
         
-        Uses a conditional GET to retrieve an updated feed, then parses it,
-        updates the cache, and returns the parsed feed.
+        Uses a conditional GET (if supported) to retrieve an updated feed,
+        then parses it, updates the cache, and returns the parsed feed.
+        
+        If the URL does not support conditional GET, the Last-Modified
+        date will be checked first with a HEAD request.
         
         If force == True, do a full GET and update the cache regardless.
         """
         logger.debug("Updating cache of %s:%d." % (self.name, self.id))
-        conditional_request = urllib2.Request(self.url)
-        if not force:
-            if self.cache and timezone.now() < self.last_updated + self.minimum_refresh_time:
-                logger.debug("Not updating, minimum refresh time not passed.")
+        
+        if force or not self.cache:
+            # Force a full GET request.
+            if not self.cache:
+                # First time accessing the URL, see if it supports conditional GET.
+                self.supports_conditional_get = self.check_conditional_support()
+            request = urllib2.Request(self.url)
+        elif timezone.now() < self.last_updated + self.minimum_refresh_time:
+            logger.debug("Not updating, minimum refresh time not passed.")
+            return self.cache
+        elif self.supports_conditional_get:
+            # Set up a conditional GET request.
+            request = urllib2.Request(self.url, headers={'If-Modified-Since': self.last_updated.strftime(web_timestamp_format)})
+        else:
+            # First send a HEAD request to check Last-Modified header.
+            head_request = HeadRequest(self.url)
+            try:
+                response = urllib2.urlopen(head_request)
+            except HTTPError as e:
+                logger.debug("Error %d response when sending HEAD request for %s." % (e.code, self.name))
                 return self.cache
-            conditional_request.add_header(
-                'If-Modified-Since',
-                self.last_updated.strftime(web_timestamp_format)
-            )
+            last_modified = last_modified = parser.parse(response.headers.setdefault('Last-Modified', str(timezone.now())))
+            if last_modified <= self.last_updated:
+                # No update since last check. Return old cache.
+                logger.debug("HEAD request indicates no change.")
+                return self.cache
+            request = urllib2.Request(self.url)
+        
         try:
-            response = urllib2.urlopen(conditional_request)
+            response = urllib2.urlopen(request)
         except urllib2.HTTPError as e:
             if e.code == 304:
                 # Feed hasn't updated since we last hit it; return old cache.
