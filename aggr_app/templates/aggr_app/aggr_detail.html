@@ -1,14 +1,15 @@
 {% extends "aggr_app/base.html" %}
 {% block title %}{{ aggr.name }}{% endblock %}
 {% block content %}
+{% load url from future %}
 <h2>{{ aggr.name }}</h2>
+<h3><a href="{{ rss_url }}">RSS Feed</a></h3>
 <ul>
 {% for entry in aggr.items %}
     <li><h4><a href="{{ entry.link }}">{{ entry.title }}</a></h4>
         <p>{{ entry.summary|safe }}</p></li>
 {% endfor %}
 </ul>
-{% load url from future %}
 <form method="GET" action="{% url 'aggr_app.views.new_aggr' aggr.id %}">
 <input type="submit" value="Edit">
 </form>

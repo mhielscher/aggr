@@ -1,6 +1,7 @@
 from django.conf.urls import patterns, include, url
 from django.views.generic import DeleteView
 from aggr_app.models import Aggregate
+from aggr_app.feeds import AggregateFeed
 
 urlpatterns = patterns('aggr_app.views',
     url(r'^$', 'index'),
@@ -11,4 +12,5 @@ urlpatterns = patterns('aggr_app.views',
     url(r'^aggr/new/$', 'new_aggr'),
     url(r'^aggr/(?P<aggr_id>\d+)/modify/$', 'new_aggr'),
     url(r'^aggr/(?P<aggr_id>\d+)/delete/$', 'delete_aggr'),
+    url(r'^rss/(?P<aggr_id>\d+)/$', AggregateFeed(), name='aggr-rss'),
 )

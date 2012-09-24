@@ -1,4 +1,5 @@
 from aggr_app.models import Feed, FilteredFeed, Aggregate
+from aggr_app.feeds import AggregateFeed
 from django.core.urlresolvers import reverse
 from django.http import HttpResponse, HttpResponseRedirect
 from django.shortcuts import render, render_to_response, get_object_or_404
@@ -121,10 +122,12 @@ def aggr_detail(request, aggr_id):
     """Shows all entries (filtered) in a given Aggregate."""
     aggr = get_object_or_404(Aggregate, pk=aggr_id)
     aggr.apply_filters()
+    aggr.save()
+    rss_url = reverse('aggr-rss', args=(aggr.id,))
     return render(
         request,
         'aggr_app/aggr_detail.html',
-        {'aggr': aggr}
+        {'aggr': aggr, 'rss_url': rss_url}
     )
 
 def new_aggr(request, aggr_id=None):
