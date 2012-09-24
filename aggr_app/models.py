@@ -94,7 +94,7 @@ class Feed(models.Model):
             head_request = HeadRequest(self.url)
             try:
                 response = urllib2.urlopen(head_request)
-            except HTTPError as e:
+            except urllib2.HTTPError as e:
                 logger.debug("Error %d response when sending HEAD request for %s." % (e.code, self.name))
                 return self.cache
             last_modified = last_modified = parser.parse(response.headers.setdefault('Last-Modified', str(timezone.now())))
@@ -200,6 +200,6 @@ class Aggregate(models.Model):
                             logger.debug("Adding %s" % entry.title)
                             items.append(entry)
         # Sort by descending published date.
-        self.items = sorted(items, key=lambda e: e.get('published_parsed') or e.get('updated_parsed'))
+        self.items = sorted(items, key=lambda e: e.get('published_parsed') or e.get('updated_parsed'), reverse=True)
         return self.items
 
