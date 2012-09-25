@@ -170,13 +170,18 @@ class Aggregate(models.Model):
     name = models.CharField(max_length=100)
     feeds = models.ManyToManyField(FilteredFeed)
     items = PickledObjectField(default=[])
+    owner = ForeignKey(models.User)
+    is_public = models.BooleanField(default=False)
     
     def __unicode__(self):
         return self.name
     
     # Deprecated, returns duplicates.
     def get_unfiltered_items(self):
-        """Returns all items in the component feeds, sorted by published timestamp."""
+        """Returns all items in the component feeds, sorted by published timestamp.
+        
+        DEPRECATED
+        """
         feeds = [f.feed.update_cache() for f in self.feeds.all()]
         # Add the feed name to each entry for annotation.
         for feed in feeds:

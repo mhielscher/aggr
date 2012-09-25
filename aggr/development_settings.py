@@ -19,7 +19,7 @@ DATABASES = {
 }
 
 MEDIA_ROOT = os.path.join(ROOT_PATH, 'media')
-MEDIA_URL = 'http://127.0.0.1:8000/media/'
+MEDIA_URL = 'http://localhost:8000/media/'
 ADMIN_MEDIA_PREFIX = '/media/admin/'
 
 TIME_ZONE = 'America/Los_Angeles'
