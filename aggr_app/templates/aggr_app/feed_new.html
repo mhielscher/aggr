@@ -6,8 +6,7 @@
 {% load url from future %}
 <form action="{% url 'aggr_app.views.new_feed' %}" method="post">
 {% csrf_token %}
-<label for="name">Feed Name</label> <input type="text" name="name" id="0" /><br />
-<label for="url">URL</label> <input type="text" name="url" id="1" /><br />
+{{ form.as_p }}
 <input type="submit" value="Create" />
 </form>
 {% endblock content %}
