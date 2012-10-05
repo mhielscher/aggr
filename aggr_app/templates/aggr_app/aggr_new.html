@@ -50,7 +50,7 @@
 {% block content %}
 <h2>New Aggregate</h2>
 {% if error_message %}<p><strong>{{ error_message }}</strong></p>{% endif %}
-{% load url from future %}
+
 {% if aggr == None %}
 <form action="{% url 'aggr_app.views.new_aggr' %}" method="post">
 {% else %}

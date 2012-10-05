@@ -8,7 +8,7 @@
     <li><h4><a href="{{ entry.link }}">{{ entry.title }}</a></h4>
         <p>{{ entry.summary|safe }}</p></li>
 {% endfor %}
-{% load url from future %}
+
 <form method="GET" action="{% url 'aggr_app.views.delete_feed' feed.id %}">
 <input type="submit" name="delete" value="Delete Feed">
 </form>

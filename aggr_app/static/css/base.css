@@ -1,1 +1,92 @@
-/* nothing yet */
+/* base.css
+
+Styles for every page that inherits from base.html
+*/
+
+body {
+    margin: 0 auto;
+    width: 790px;
+    font: 100% "Trebuchet MS", Arial, Helvetica, sans-serif;
+    font-size: 0.825em;
+}
+
+header {
+    width: 100%;
+    background-color: #646464;
+    color: white;
+}
+
+header hgroup {
+    font-family: "Computer Modern", Georgia, serif;
+}
+
+header hgroup a {
+    color: white;
+    text-decoration: none;
+}
+
+header hgroup h1 {
+    font-size: 2.5em;
+}
+
+header hgroup h2 {
+    font-size: 1.2em;
+}
+
+nav {
+    width: 100%;
+    background-color: #424242;
+    color: white;
+}
+
+nav ul {
+    font: 1.1em Georgia, serif;
+    list-style: none;
+    padding: 5px 0px;
+    float: left;
+}
+
+nav ul li {
+    padding: 10px;
+    display: inline;
+}
+
+nav a {
+    color: white;
+    text-decoration: none;
+}
+
+nav form#login {
+    padding: 3px 0px;
+    float: right;
+}
+
+nav form#login input {
+    font-size: 0.875em;
+}
+
+nav form#login button {
+    font: inherit;
+    font-size: 0.875em;
+    background-color: transparent;
+    color: white;
+    border: none;
+    cursor: pointer;
+    line-height: normal;
+    
+}
+
+div.clear {
+    clear: both;
+}
+
+div.content {
+    
+}
+
+footer {
+    padding: 10px 2px;
+    background-color: #444444;
+    color: white;
+    font-size: 0.925em;
+}

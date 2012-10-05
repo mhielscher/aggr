@@ -1,4 +1,5 @@
 from django.db import models
+from django.contrib.auth.models import User
 import datetime
 import time
 from dateutil import parser
@@ -170,7 +171,7 @@ class Aggregate(models.Model):
     name = models.CharField(max_length=100)
     feeds = models.ManyToManyField(FilteredFeed)
     items = PickledObjectField(default=[])
-    owner = ForeignKey(models.User)
+    owner = models.ForeignKey(User)
     is_public = models.BooleanField(default=False)
     
     def __unicode__(self):

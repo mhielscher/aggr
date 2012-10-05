@@ -9,7 +9,7 @@ import logging
 
 logger = logging.getLogger(__name__)
 
-def index(request):
+def home(request):
     """Lists all Feeds and Aggregates by name."""
     feed_list = Feed.objects.all().order_by('-last_updated')
     aggr_list = Aggregate.objects.all().order_by('-name')
@@ -116,7 +116,7 @@ def delete_feed(request, feed_id):
         else:
             feed = Feed.objects.get(pk=feed_id)
             feed.delete()
-            return HttpResponseRedirect(reverse('aggr_app.views.index'))
+            return HttpResponseRedirect(reverse('aggr_app.views.home'))
 
 def aggr_detail(request, aggr_id):
     """Shows all entries (filtered) in a given Aggregate."""
@@ -236,5 +236,5 @@ def delete_aggr(request, aggr_id):
             for feed in aggr.feeds.all():
                 feed.delete()
             aggr.delete()
-            return HttpResponseRedirect(reverse('aggr_app.views.index'))
+            return HttpResponseRedirect(reverse('aggr_app.views.home'))
 
