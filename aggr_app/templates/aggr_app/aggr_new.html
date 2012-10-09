@@ -8,15 +8,15 @@
     
     $(document).ready(function() {
         $('#btnAdd').click(function() {
-            var num     = $('.clonedInput').length - 1; // how many "duplicatable" input fields we currently have
+            var num     = $('#id_filter_count').val()-1; // how many "duplicatable" input fields we currently have
             var newNum  = new Number(num + 1);      // the numeric ID of the new input field being added
 
             // create the new element via clone(), and manipulate its ID using newNum value
             var newElem = $('#input' + num).clone().attr('id', 'input' + newNum);
 
             // manipulate the name/id values of the input inside the new element
-            newElem.children(':eq(0)').attr('id', 'feed' + newNum).attr('name', 'feed' + newNum);
-            newElem.children(':eq(1)').attr('id', 'filter' + newNum).attr('name', 'filter' + newNum).attr('value', '')
+            newElem.children(':eq(0)').attr('id', 'id_feed' + newNum).attr('name', 'feed' + newNum);
+            newElem.children(':eq(1)').attr('id', 'id_filter' + newNum).attr('name', 'filter' + newNum).attr('value', '')
             newElem.children(':eq(0)').children(':eq(0)').attr('selected', 'selected')
 
             // insert the new element after the last "duplicatable" input field
@@ -24,6 +24,9 @@
 
             // enable the "remove" button
             $('#btnDel').attr('disabled','');
+            
+            // update the hidden count
+            $('#id_filter_count').val(newNum+1);
 
             // business rule: you can only add 5 names
             if (newNum == 20)
@@ -31,11 +34,14 @@
         });
 
         $('#btnDel').click(function() {
-            var num = $('.clonedInput').length - 1; // how many "duplicatable" input fields we currently have
+            var num = $('#id_filter_count').val()-1; // how many "duplicatable" input fields we currently have
             $('#input' + num).remove();     // remove the last element
 
             // enable the "add" button
             $('#btnAdd').attr('disabled','');
+            
+            // update the hidden count
+            $('#id_filter_count').val(num);
 
             // if only one element remains, disable the "remove" button
             if (num == 1)
@@ -57,29 +63,19 @@
 <form action="{% url aggr_app.views.new_aggr aggr.id %}" method="post">
 {% endif %}
 {% csrf_token %}
-<label for="name">Aggregate Name</label> <input type="text" name="name" id="0" value="{{ aggr.name }}" /><br />
+{{ form.non_field_errors }}
+{{ form.name.errors }}
+<label for="name">Name</label>
+{{ form.name }}{{ form.filter_count }}<br />
 <label>Filters</label>
-{% if aggr != None %}
-{% for filtered_feed in aggr.feeds.all %}
+{% for feed, filter in filter_fields %}
 <div id="input{{ forloop.counter0 }}" class="clonedInput">
-    <select name="feed{{ forloop.counter0 }}" id="feed{{ forloop.counter0 }}">
-    {% for feed in feed_list %}
-        <option value="{{ feed.id }}" {% if feed.id == filtered_feed.feed.id %}selected="selected"{% endif %}>{{ feed.name }}</option>
-    {% endfor %}
-    </select>
-    <input type="text" size="50" name="filter{{ forloop.counter0 }}" id="filter{{ forloop.counter0 }}" value="{{ filtered_feed.re_filter }}" />
+    {{ feed.errors }}
+    {{ filter.errors }}
+    {{ feed }}
+    {{ filter }}
 </div>
 {% endfor %}
-{% else %}
-<div id="input0" class="clonedInput">
-    <select name="feed0" id="feed0">
-    {% for feed in feed_list %}
-        <option value="{{ feed.id }}">{{ feed.name }}</option>
-    {% endfor %}
-    </select>
-    <input type="text" size="50" name="filter0" id="filter0" />
-</div>
-{% endif %}
 <div>
     <input type="button" id="btnAdd" value="Add Filter" />
     <input type="button" id="btnDel" value="Remove Filter" />

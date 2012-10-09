@@ -1,0 +1,26 @@
+To Do
+---
+X clean up code
+X filters
+X conditional GET
+x delete aggregates
+X modify aggregates
+X filters per-feed (per-aggr)
+X unique feeds
+X figure out a better updating scheme, esp. for feeds that don't support conditional GET
+X generate RSS feeds of Aggregates
+- users
+- public/private aggregates
+- design
+- subscribers
+- continuous historical data
+    implies:
+    - save posts as they're loaded
+    - reload posts regularly with cron
+    - deduce optimum rate to reload feeds
+- internal caching (Django)
+- filtering based on other feed tags (author, date, category, tags, etc.)
+- multithreaded feed fetching (see threadpool)
+- replace non-autoescaping with selective escaping
+
+

@@ -165,6 +165,12 @@ class FilteredFeed(models.Model):
     
     def compiled_filter(self):
         return re.compile(self.re_filter)
+    
+    def make_tuple(self):
+        return (self.feed.id, self.re_filter)
+    
+    def matches_tuple(self, rhs):
+        return (self.feed.id == rhs[0] and self.re_filter == rhs[1])
 
 
 class Aggregate(models.Model):
@@ -209,5 +215,9 @@ class Aggregate(models.Model):
         # Sort by descending published date.
         self.items = sorted(items, key=lambda e: e.get('published_parsed') or e.get('updated_parsed'), reverse=True)
         return self.items
+    
+    def feed_tuple(self):
+        """Returns a tuple of 2-tuples of feed id and filter string."""
+        return tuple(feed.make_tuple() for feed in self.feeds.all())
 
 
