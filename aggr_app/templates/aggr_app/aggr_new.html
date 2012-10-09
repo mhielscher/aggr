@@ -52,9 +52,9 @@
 {% if error_message %}<p><strong>{{ error_message }}</strong></p>{% endif %}
 
 {% if aggr == None %}
-<form action="{% url 'aggr_app.views.new_aggr' %}" method="post">
+<form action="{% url aggr_app.views.new_aggr %}" method="post">
 {% else %}
-<form action="{% url 'aggr_app.views.new_aggr' aggr.id %}" method="post">
+<form action="{% url aggr_app.views.new_aggr aggr.id %}" method="post">
 {% endif %}
 {% csrf_token %}
 <label for="name">Aggregate Name</label> <input type="text" name="name" id="0" value="{{ aggr.name }}" /><br />

@@ -17,5 +17,5 @@ urlpatterns = patterns('aggr_app.views',
 
 urlpatterns += patterns('',
     url(r'^login$', 'django.contrib.auth.views.login'),
-    url(r'^logout$', 'django.contrib.auth.views.logout'),
+    url(r'^logout/(?P<next_page>.*)$', 'django.contrib.auth.views.logout'),
 )

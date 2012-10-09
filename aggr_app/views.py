@@ -4,6 +4,7 @@ from django.core.urlresolvers import reverse
 from django.http import HttpResponse, HttpResponseRedirect
 from django.shortcuts import render, render_to_response, get_object_or_404
 from django.template import RequestContext
+from django.contrib.auth.decorators import login_required
 import feedparser
 import logging
 
@@ -11,8 +12,8 @@ logger = logging.getLogger(__name__)
 
 def home(request):
     """Lists all Feeds and Aggregates by name."""
-    feed_list = Feed.objects.all().order_by('-last_updated')
-    aggr_list = Aggregate.objects.all().order_by('-name')
+    feed_list = request.user.feed_set.all().order_by('-last_updated')
+    aggr_list = request.user.aggregate_set.all().order_by('-name')
     return render(
         request,
         'aggr_app/index.html', 
@@ -29,6 +30,7 @@ def feed_detail(request, feed_id):
         {'feed': feed}
     )
 
+@login_required
 def new_feed(request):
     """Create a new feed.
     
@@ -71,6 +73,7 @@ def new_feed(request):
             reverse('aggr_app.views.feed_detail',
             args=(feed.id,)))
 
+@login_required
 def delete_feed(request, feed_id):
     """Confirm (GET) and delete (POST) an Feed.
     
@@ -121,6 +124,12 @@ def delete_feed(request, feed_id):
 def aggr_detail(request, aggr_id):
     """Shows all entries (filtered) in a given Aggregate."""
     aggr = get_object_or_404(Aggregate, pk=aggr_id)
+    if not aggr.is_public and not request.user.is_authenticated():
+        return HttpResponseRedirect(reverse('django.contrib.auth.views.login'))
+    if aggr.owner != request.user:
+        return HttpResponseRedirect(reverse('aggr_app.views.home')) # temporary
+    
+    # Authenticated to get this aggr
     aggr.apply_filters()
     aggr.save()
     rss_url = reverse('aggr-rss', args=(aggr.id,))
@@ -130,6 +139,7 @@ def aggr_detail(request, aggr_id):
         {'aggr': aggr, 'rss_url': rss_url}
     )
 
+@login_required
 def new_aggr(request, aggr_id=None):
     """Create a new Aggregate.
     
@@ -190,6 +200,7 @@ def new_aggr(request, aggr_id=None):
                 args=(aggr.id,))
             )
             
+@login_required
 def delete_aggr(request, aggr_id):
     """Confirm (GET) and delete (POST) an Aggregate.
     

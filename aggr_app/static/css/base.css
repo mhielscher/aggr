@@ -14,6 +14,7 @@ header {
     width: 100%;
     background-color: #646464;
     color: white;
+    padding: 5px 10px;
 }
 
 header hgroup {
@@ -56,7 +57,7 @@ nav a {
     text-decoration: none;
 }
 
-nav form#login {
+nav form#login, nav form#logout {
     padding: 3px 0px;
     float: right;
 }
@@ -65,7 +66,7 @@ nav form#login input {
     font-size: 0.875em;
 }
 
-nav form#login button {
+nav form#login button, nav form#logout button {
     font: inherit;
     font-size: 0.875em;
     background-color: transparent;

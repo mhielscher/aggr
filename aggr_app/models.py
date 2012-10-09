@@ -22,6 +22,7 @@ class Feed(models.Model):
     """Models RSS/Atom feeds; parses and caches their contents."""
     name = models.CharField(max_length=100)
     url = models.URLField(max_length=400)
+    subscribers = models.ManyToManyField(User)
     last_updated = models.DateTimeField(auto_now_add=True)
     cache_expires = models.DateTimeField(auto_now_add=True)
     supports_conditional_get = models.BooleanField(default=False)
@@ -208,4 +209,5 @@ class Aggregate(models.Model):
         # Sort by descending published date.
         self.items = sorted(items, key=lambda e: e.get('published_parsed') or e.get('updated_parsed'), reverse=True)
         return self.items
+
 

@@ -10,10 +10,10 @@
         <p>{{ entry.summary|safe }}</p></li>
 {% endfor %}
 </ul>
-<form method="GET" action="{% url 'aggr_app.views.new_aggr' aggr.id %}">
+<form method="GET" action="{% url aggr_app.views.new_aggr aggr.id %}">
 <input type="submit" value="Edit">
 </form>
-<form method="GET" action="{% url 'aggr_app.views.delete_aggr' aggr.id %}">
+<form method="GET" action="{% url aggr_app.views.delete_aggr aggr.id %}">
 <input type="submit" value="Delete">
 </form>
 {% endblock content %}

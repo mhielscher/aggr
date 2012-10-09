@@ -3,7 +3,7 @@
 {% block content %}
 <h2>New Aggregate</h2>
 {% if error_message %}<p><strong>{{ error_message }}</strong></p>{% endif %}
-<form action="{% url 'aggr_app.views.modify_aggr' aggr.id %}" method="post">
+<form action="{% url aggr_app.views.modify_aggr aggr.id %}" method="post">
 {% csrf_token %}
 <label for="name">Aggregate Name</label> <input type="text" name="name" value="{{ aggr.name }}" id="0" /><br />
 <label for="feeds">Feeds</label>

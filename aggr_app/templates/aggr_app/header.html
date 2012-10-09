@@ -5,7 +5,7 @@
     </hgroup>
 </header>
 <nav>
-    {% if logged_in %}
+    {% if user.is_authenticated %}
         <ul>
             <li><a href="{% url aggr_app.views.home %}">Home</a></li>
             <li><a href="{% url aggr_app.views.new_aggr %}">New Aggr</a></li>
@@ -13,7 +13,7 @@
         <div class="separator"></div>
         <form id="logout" method="POST" action="{% url django.contrib.auth.views.logout next_page=request.path %}">
             {% csrf_token %}
-            <button type="submit" value="Logout" />
+            <button type="submit">Logout</button>
         </form>
         <div class="clear"></div>
     {% else %}
