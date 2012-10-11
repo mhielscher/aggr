@@ -1,8 +1,6 @@
 from django import forms
 from aggr_app.models import Feed
 
-feed_choices = tuple([(feed.id, feed.name) for feed in Feed.objects.all()])
-
 class NewFeedForm(forms.Form):
     name = forms.CharField(max_length=100, required=True)
     url = forms.URLField(max_length=400, required=True)
@@ -22,6 +20,7 @@ class NewAggrForm(forms.Form):
         If filter_count is less than the number of filters, filter_count is ignored.
         Otherwise, extra fields are filled in with defaults.
         """
+        feed_choices = tuple(kwargs.pop('feed_choices', tuple()))
         filters = kwargs.pop('filters', tuple())
         filter_count = int(kwargs.pop('filter_count', 1))
         super(NewAggrForm, self).__init__(*args, **kwargs)

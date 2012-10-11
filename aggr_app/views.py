@@ -5,16 +5,46 @@ from django.core.urlresolvers import reverse
 from django.http import HttpResponse, HttpResponseRedirect
 from django.shortcuts import render, render_to_response, get_object_or_404
 from django.template import RequestContext
+from django.contrib.auth.models import User
 from django.contrib.auth.decorators import login_required
+from django.contrib.auth.forms import UserCreationForm
+from django.contrib.auth import login
 import feedparser
 import logging
 
 logger = logging.getLogger(__name__)
 
+def new_user(request):
+    """Registers a new user."""
+    if request.method == "GET":
+        form = UserCreationForm()
+        return render(
+            request,
+            'registration/register.html',
+            {'form': form},
+        )
+    elif request.method == "POST":
+        form = UserCreationForm(request.POST)
+        if form.is_valid():
+            user = User.objects.create_user(form.cleaned_data['username'], password=form.cleaned_data['password1'])
+            user.save()
+            login(request, user)
+            return HttpResponseRedirect(reverse('aggr_app.views.home'))
+        else:
+            return render(
+                request,
+                'registration/register.html',
+                {'form': form}
+            )
+
 def home(request):
     """Lists all Feeds and Aggregates by name."""
-    feed_list = request.user.feed_set.all().order_by('-last_updated')
-    aggr_list = request.user.aggregate_set.all().order_by('-name')
+    if request.user.is_authenticated():
+        feed_list = request.user.feed_set.all().order_by('-last_updated')
+        aggr_list = request.user.aggregate_set.all().order_by('-name')
+    else:
+        feed_list = None
+        aggr_list = Aggregate.objects.filter(is_public=True)
     return render(
         request,
         'aggr_app/index.html', 
@@ -53,17 +83,12 @@ def new_feed(request):
             url = form.cleaned_data['url']
             
             if Feed.objects.filter(url=url).exists():
-                return render(
-                    request,
-                    'aggr_app/feed_new.html',
-                    {
-                        'error_message': 'That feed already exists.',
-                        'form': form
-                    }
-                )
-        
-            # Finally create the new Feed.
-            feed = Feed(name=name, url=url)
+                feed = Feed.objects.get(url=url)
+            else:
+                feed = Feed(name=name, url=url)
+                # do an initial save so we can manipulate ManyToMany
+                feed.save()
+            feed.subscribers.add(request.user)
             feed.save()
             return HttpResponseRedirect(
                 reverse('aggr_app.views.feed_detail',
@@ -154,12 +179,13 @@ def new_aggr(request, aggr_id=None):
     """
     logger.debug("aggr_id=%s" % aggr_id)
     if request.method == 'GET':
+        feed_choices = [(feed.id, feed.name) for feed in request.user.feed_set.all()]
         if aggr_id:
             aggr = Aggregate.objects.get(pk=aggr_id)
-            form = NewAggrForm(initial={'name': aggr.name}, filters=aggr.feed_tuple())
+            form = NewAggrForm(initial={'name': aggr.name}, feed_choices=feed_choices, filters=aggr.feed_tuple())
         else:
             aggr = None
-            form = NewAggrForm()
+            form = NewAggrForm(feed_choices=feed_choices)
         
         # Neat trick to turn ['feed0', 'filter0', 'feed1', 'filter1', ...]
         # into [('feed0', 'filter0'), ('feed1', 'filter1'), ...]

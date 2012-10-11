@@ -109,6 +109,7 @@ INSTALLED_APPS = (
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'aggr_app',
+    'registration',
     # Uncomment the next line to enable the admin:
     'django.contrib.admin',
     # Uncomment the next line to enable admin documentation:
@@ -127,6 +128,8 @@ PASSWORD_HASHERS = (
 LOGIN_REDIRECT_URL = '/'
 LOGIN_URL = '/login'
 LOGOUT_URL = '/logout'
+
+ACCOUNT_ACTIVATION_DAYS = 7
 
 
 # Import overriding development or deployment settings

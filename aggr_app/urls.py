@@ -14,8 +14,12 @@ urlpatterns = patterns('aggr_app.views',
     url(r'^aggr/(?P<aggr_id>\d+)/delete$', 'delete_aggr'),
     url(r'^rss/(?P<aggr_id>\d+)$', AggregateFeed(), name='aggr-rss'),
 )
-
 urlpatterns += patterns('',
     url(r'^login$', 'django.contrib.auth.views.login'),
     url(r'^logout/(?P<next_page>.*)$', 'django.contrib.auth.views.logout'),
+    #url(r'^register/$', 'aggr_app.views.new_user'),
+)
+
+urlpatterns += patterns('',
+    url(r'accounts/', include('registration.backends.default.urls')),
 )

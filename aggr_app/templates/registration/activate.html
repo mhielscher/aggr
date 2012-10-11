@@ -1,0 +1,8 @@
+{% extends "aggr_app/base.html" %}
+{% block title %}Registration Complete{% endblock %}
+{% block head %}
+    <link href="{{ STATIC_URL }}css/register.css" rel="stylesheet" type="text/css" />
+{% endblock %}
+{% block content %}
+<p>The activation key {{ activation_key }} was not correct.</p>
+{% endblock content %}

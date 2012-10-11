@@ -10,15 +10,9 @@
 {% csrf_token %}
     <input type="hidden" name="next" value="{{ next }}" />
     <table>
-        <tr>
-            <td>{{ form.username.label_tag }}</td>
-            <td>{{ form.username  }}</td>
-        </tr>
-        <tr>
-            <td>{{ form.password.label_tag }}</td>
-            <td>{{ form.password }}</td>
-        </tr>
+        {{ form.as_table }}
     </table>
     <input type="submit" value="Login" />
 </form>
+<p><a href="{% url registration.views.register %}">Register here.</a></p>
 {% endblock content %}
