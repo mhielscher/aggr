@@ -1,5 +1,6 @@
 To Do
 ---
+Dev:
 X clean up code
 X filters
 X conditional GET
@@ -8,19 +9,85 @@ X modify aggregates
 X filters per-feed (per-aggr)
 X unique feeds
 X figure out a better updating scheme, esp. for feeds that don't support conditional GET
+- document
+- test
 X generate RSS feeds of Aggregates
 - users
-- public/private aggregates
+X public/private aggregates
+- document
+- test
 - design
-- subscribers
+X subscribers to feeds
+- replace non-autoescaping with selective escaping
 - continuous historical data
     implies:
     - save posts as they're loaded
-    - reload posts regularly with cron
+    - reload posts regularly with django-cron(?)
     - deduce optimum rate to reload feeds
+- DOCUMENT
+- TEST
+- production error reporting
+Beta:
 - internal caching (Django)
 - filtering based on other feed tags (author, date, category, tags, etc.)
-- multithreaded feed fetching (see threadpool)
-- replace non-autoescaping with selective escaping
+- subscribers to public aggrs
+- multithreaded feed fetching (see threadpool) [obsoleted?]
+- search posts
+- AJAX/single-page support
+- redesign
 
+
+Sitemap/Layout
+---
+Base
+    Left column
+        if logged in: user nav
+        else: anon nav
+Anon Nav
+    login button/form
+    register button/link
+    list of public aggrs
+User Nav
+    logout button/form
+    tabs
+        list of own aggrs
+        list of subscribed feeds with subscribe button
+        list of public aggrs
+Welcome - / - not logged in
+    Content
+        Welcome to Aggr, explanation, call to action
+Home - / - logged in
+    Content
+        newest posts in all aggrs
+Aggr Detail - /detail/<id> - not logged in
+    Content
+        Main column
+            posts in chosen public aggr, sorted newest at top
+        Right column
+            list of filters
+Aggr Detail - /detail/<id> - logged in
+    Content
+        Main column
+            posts in chosen aggr, sorted newest at top
+        Right column
+            list of filters, each with delete button
+            add filter button
+            delete aggr button
+Feed Detail - /feed/<id> - logged in
+    Content
+        sorted feed posts
+        unsubscribe button
+[the following will eventually be replaced with AJAX-based on-page elements]
+Subscribe - /feed/add - logged in
+    Content
+        add feed form
+Unsubscribe Confirm - /feed/unsubscribe/<id> - logged in
+    Content
+        confirm form
+New Aggr - /aggr/add - logged in
+    Content
+        add aggr form
+Delete Aggr Confirm - /aggr/delete/<id> - logged in
+    Content
+        confirm form
 

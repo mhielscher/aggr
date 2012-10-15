@@ -80,6 +80,9 @@
     <input type="button" id="btnAdd" value="Add Filter" />
     <input type="button" id="btnDel" value="Remove Filter" />
 </div>
+<div>
+    {{ form.is_public.label }} {{ form.is_public }}
+</div>
 {% if aggr == None %}
 <input type="submit" value="Create Aggregate" />
 {% else %}

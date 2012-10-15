@@ -8,6 +8,7 @@ class NewFeedForm(forms.Form):
 class NewAggrForm(forms.Form):
     """Variable form."""
     name = forms.CharField(max_length=100)
+    is_public = forms.BooleanField(initial=False, label="Make public")
     filter_count = forms.CharField(widget=forms.HiddenInput())
     
     def __init__(self, *args, **kwargs):

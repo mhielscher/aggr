@@ -1,5 +1,0 @@
-A Django app for reading, aggregating, and filtering RSS/Atom feeds.
-
-django 1.4.1
-picklefield 0.1.9
-feedparser 5.0.1

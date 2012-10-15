@@ -178,8 +178,8 @@ def new_aggr(request, aggr_id=None):
     POST: attempt to create the new aggr.
     """
     logger.debug("aggr_id=%s" % aggr_id)
+    feed_choices = [(feed.id, feed.name) for feed in request.user.feed_set.all()]
     if request.method == 'GET':
-        feed_choices = [(feed.id, feed.name) for feed in request.user.feed_set.all()]
         if aggr_id:
             aggr = Aggregate.objects.get(pk=aggr_id)
             form = NewAggrForm(initial={'name': aggr.name}, feed_choices=feed_choices, filters=aggr.feed_tuple())
@@ -189,7 +189,7 @@ def new_aggr(request, aggr_id=None):
         
         # Neat trick to turn ['feed0', 'filter0', 'feed1', 'filter1', ...]
         # into [('feed0', 'filter0'), ('feed1', 'filter1'), ...]
-        filter_fields_iter = list(form)[2:].__iter__()
+        filter_fields_iter = list(form)[3:].__iter__()
         filter_fields = zip(filter_fields_iter, filter_fields_iter)
         
         return render(
@@ -205,16 +205,17 @@ def new_aggr(request, aggr_id=None):
     elif request.method == 'POST':
         logger.debug("trying")
         filter_count = int(request.POST.get('filter_count'))
-        form = NewAggrForm(request.POST, filter_count=filter_count)
+        form = NewAggrForm(request.POST, filter_count=filter_count, feed_choices=feed_choices)
         if form.is_valid():
             logger.debug("Form is valid.")
             if aggr_id:
                 logger.debug("Modifying existing Aggr id=%s" % aggr_id)
                 aggr = Aggregate.objects.get(pk=aggr_id)
                 aggr.name = form.cleaned_data['name']
+                aggr.is_public = form.cleaned_data['is_public']
             else:
                 logger.debug("Creating new Aggr")
-                aggr = Aggregate(name=form.cleaned_data['name'])
+                aggr = Aggregate(name=form.cleaned_data['name'], is_public=form.cleaned_data['is_public'], owner=request.user)
             
             feed_filters = []
             logger.debug("filter_count=%d" % (filter_count,))
