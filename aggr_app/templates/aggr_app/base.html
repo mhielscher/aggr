@@ -11,6 +11,11 @@
     </head>
     <body>
         {% include "aggr_app/header.html" %}
+        {% if request.user.is_authenticated %}
+            {% include "aggr_app/user_nav.html" %}
+        {% else %}
+            {% include "aggr_app/anon_nav.html" %}
+        {% endif %}
         <div class="content">
             {% block content %}
             {% endblock %}

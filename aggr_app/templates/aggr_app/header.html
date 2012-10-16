@@ -4,36 +4,3 @@
         <h2>Only what you care about from your feeds.</h2>
     </hgroup>
 </header>
-<nav>
-    {% if user.is_authenticated %}
-        <ul>
-            <li><a href="{% url aggr_app.views.home %}">Home</a></li>
-            <li><a href="{% url aggr_app.views.new_aggr %}">New Aggr</a></li>
-        </ul>
-        <div class="separator"></div>
-        <form id="logout" method="POST" action="{% url django.contrib.auth.views.logout next_page=request.path %}">
-            {% csrf_token %}
-            <button type="submit">Logout</button>
-        </form>
-        <div class="clear"></div>
-    {% else %}
-        <ul>
-            <li><a href="/">Index</a></li>
-            <li><a href="{% url aggr_app.views.new_aggr %}">New Aggr</a></li>
-        </ul>
-        <div class="separator"></div>
-        <form id="login" name="login" method="POST" action="{% url django.contrib.auth.views.login %}">
-            {% csrf_token %}
-            <input type="hidden" name="next" value="{{ request.path }}" />
-            <table>
-                <tr>
-                    <td><input type="text" name="username" value="" size="12" /></td>
-                    <td><input type="password" name="password" value="" size="12" /></td>
-                    <td><button type="submit">Login</button></td>
-                </tr>
-            </table>
-            <a href="{% url registration.views.register %}">Register</a>
-        </form>
-        <div class="clear"></div>
-    {% endif %}
-</nav>

@@ -4,10 +4,10 @@ Styles for every page that inherits from base.html
 */
 
 body {
-    margin: 0 auto;
-    width: 790px;
+    width: auto;
+    margin: 5px;
     font: 100% "Trebuchet MS", Arial, Helvetica, sans-serif;
-    font-size: 0.825em;
+    /*font-size: 0.825em;*/
 }
 
 header {
@@ -34,32 +34,36 @@ header hgroup h2 {
     font-size: 1.2em;
 }
 
-nav {
-    width: 100%;
-    background-color: #424242;
-    color: white;
-}
-
-nav ul {
-    font: 1.1em Georgia, serif;
-    list-style: none;
-    padding: 5px 0px;
+nav.sidebar {
     float: left;
+    left: 0;
+    top: 0;
+    width: 180px;
+    border-right: 1px solid gray;
 }
 
-nav ul li {
-    padding: 10px;
-    display: inline;
+nav.sidebar ul.tab-bar {
+    display: none;
+}
+
+nav section ul {
+    font: 1.1em Georgia, serif;
+    font-weight: bold;
+    list-style: none;
+    padding-left: 5px;
+}
+
+nav section ul li {
+    padding-top: 3px;
 }
 
 nav a {
-    color: white;
+    color: black;
     text-decoration: none;
 }
 
 nav form#login, nav form#logout {
-    padding: 3px 0px;
-    float: right;
+    
 }
 
 nav form#login input {
@@ -70,19 +74,15 @@ nav form#login button, nav form#logout button {
     font: inherit;
     font-size: 0.875em;
     background-color: transparent;
-    color: white;
+    color: black;
     border: none;
     cursor: pointer;
     line-height: normal;
     
 }
 
-div.clear {
-    clear: both;
-}
-
 div.content {
-    
+    margin-left: 15px;
 }
 
 footer {
@@ -90,4 +90,5 @@ footer {
     background-color: #444444;
     color: white;
     font-size: 0.925em;
+    clear: both;
 }

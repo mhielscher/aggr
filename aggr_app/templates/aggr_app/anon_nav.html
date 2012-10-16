@@ -1,0 +1,28 @@
+<nav class="sidebar">
+    <form id="login" name="login" method="POST" action="{% url django.contrib.auth.views.login %}">
+        {% csrf_token %}
+        <input type="hidden" name="next" value="{{ request.path }}" />
+        <table>
+            <tr>
+                <td><input type="text" name="username" value="" size="12" placeholder="Username" /></td>
+            </tr>
+            <tr>
+                <td><input type="password" name="password" value="" size="12" placeholder="Password" /></td>
+            </tr>
+            <tr>
+                <td><button type="submit">Login</button></td>
+                <td><a href="{% url registration.views.register %}">Register</a></td>
+            </tr>
+        </table>
+    </form>
+    <section>
+        <h3>Public Aggrs</h3>
+        <ul>
+            {% for aggr in public_aggrs %}
+                <li><a href="{% url aggr_app.views.aggr_detail aggr.id %}">{{ aggr.name }}</a></li>
+            {% endfor %}
+        </ul>
+    </section>
+</nav>
+<div class="clear">
+</div>

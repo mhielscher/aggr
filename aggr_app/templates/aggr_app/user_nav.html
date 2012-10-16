@@ -1,0 +1,39 @@
+<nav class="sidebar">
+    <form id="logout" method="POST" action="{% url django.contrib.auth.views.logout next_page=request.path %}">
+        {% csrf_token %}
+        <button type="submit">Logout</button>
+    </form>
+    <div id="tabs">
+        <ul class="tab-bar">
+            <li><a href="#aggr-tab">My Aggrs</a></li>
+            <li><a href="#feed-tab">Feeds</a></li>
+            <li><a href="#public-tab">Public Aggrs</a></li>
+        </ul>
+        <section id="aggr-tab">
+            <h3>My Aggrs</h3>
+            <ul>
+                {% for aggr in my_aggrs %}
+                    <li><a href="{% url aggr_app.views.aggr_detail aggr.id %}">{{ aggr.name }}</a></li>
+                {% endfor %}
+            </ul>
+        </section>
+        <section id="feed-tab">
+            <h3>Subscribed Feeds</h3>
+            <ul>
+                {% for feed in subscribed_feeds %}
+                    <li><a href="{% url aggr_app.views.feed_detail feed.id %}">{{ feed.name }}</a></li>
+                {% endfor %}
+            </ul>
+        </section>
+        <section id="public-tab">
+            <h3>Public Aggrs</h3>
+            <ul>
+                {% for aggr in public_aggrs %}
+                    <li><a href="{% url aggr_app.views.aggr_detail aggr.id %}">{{ aggr.name }}</a></li>
+                {% endfor %}
+            </ul>
+        </section>
+    </div>
+</nav>
+<div class="clear">
+</div>
