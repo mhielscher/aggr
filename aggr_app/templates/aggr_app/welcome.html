@@ -1,0 +1,14 @@
+{% extends "aggr_app/base.html" %}
+{% block title %}Welcome{% endblock %}
+{% block head %}
+    <link href="{{ STATIC_URL }}css/welcome.css" rel="stylesheet" type="text/css" />
+{% endblock %}
+{% block content %}
+
+<section class="callout">
+    <h1>Welcome!</h1>
+    <p>Welcome to Aggr, a tool for following <em>just what you want</em> from your feeds. Take a look around, check out some public aggrs, and then sign up and start creating your own.</p>
+    <p class="def">An <em>aggr</em> is an aggregated feed created from feeds from around the web, filtered to match your interests.</p>
+</section>
+
+{% endblock content %}

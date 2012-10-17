@@ -40,16 +40,19 @@ def new_user(request):
 def home(request):
     """Lists all Feeds and Aggregates by name."""
     if request.user.is_authenticated():
-        feed_list = request.user.feed_set.all().order_by('-last_updated')
-        aggr_list = request.user.aggregate_set.all().order_by('-name')
+        aggr_list = request.user.aggregate_set.all()
+        recent_posts = sorted([entry for aggr in aggr_list for entry in aggr.items], key=lambda e: e.get('published_parsed') or e.get('updated_parsed'), reverse=True)[:20]
+        return render(
+            request,
+            'aggr_app/home.html', 
+            {'recent_posts': recent_posts}
+        )
     else:
-        feed_list = None
-        aggr_list = Aggregate.objects.filter(is_public=True)
-    return render(
-        request,
-        'aggr_app/index.html', 
-        {'feed_list': feed_list, 'aggr_list': aggr_list}
-    )
+        return render(
+            request,
+            'aggr_app/welcome.html', 
+            {}
+        )
 
 def feed_detail(request, feed_id):
     """Displays all entries in a given feed."""

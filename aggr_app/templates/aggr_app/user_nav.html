@@ -10,7 +10,7 @@
             <li><a href="#public-tab">Public Aggrs</a></li>
         </ul>
         <section id="aggr-tab">
-            <h3>My Aggrs</h3>
+            <h1>My Aggrs</h1>
             <ul>
                 {% for aggr in my_aggrs %}
                     <li><a href="{% url aggr_app.views.aggr_detail aggr.id %}">{{ aggr.name }}</a></li>
@@ -18,7 +18,7 @@
             </ul>
         </section>
         <section id="feed-tab">
-            <h3>Subscribed Feeds</h3>
+            <h1>Subscribed Feeds</h1>
             <ul>
                 {% for feed in subscribed_feeds %}
                     <li><a href="{% url aggr_app.views.feed_detail feed.id %}">{{ feed.name }}</a></li>
@@ -26,7 +26,7 @@
             </ul>
         </section>
         <section id="public-tab">
-            <h3>Public Aggrs</h3>
+            <h1>Public Aggrs</h1>
             <ul>
                 {% for aggr in public_aggrs %}
                     <li><a href="{% url aggr_app.views.aggr_detail aggr.id %}">{{ aggr.name }}</a></li>

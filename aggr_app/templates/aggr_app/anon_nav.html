@@ -16,7 +16,7 @@
         </table>
     </form>
     <section>
-        <h3>Public Aggrs</h3>
+        <h1>Public Aggrs</h1>
         <ul>
             {% for aggr in public_aggrs %}
                 <li><a href="{% url aggr_app.views.aggr_detail aggr.id %}">{{ aggr.name }}</a></li>
