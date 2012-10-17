@@ -27,19 +27,20 @@ header hgroup a {
 }
 
 header hgroup h1 {
-    font-size: 2.5em;
+    font-size: 1.6em;
 }
 
 header hgroup h2 {
-    font-size: 1.2em;
+    font-size: 1.0em;
 }
 
 nav.sidebar {
-    float: left;
+    position: fixed;
     left: 0;
     top: 0;
     width: 180px;
     border-right: 1px solid gray;
+    background-color: white;
 }
 
 nav.sidebar ul.tab-bar {
@@ -79,6 +80,13 @@ nav form#login button, nav form#logout button {
     cursor: pointer;
     line-height: normal;
     
+}
+
+div.main {
+    position: absolute;
+    left: 180px;
+    top: 0;
+    width: 100%;
 }
 
 div.content {
