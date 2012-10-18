@@ -14,8 +14,7 @@
     <h1>Recent posts from all aggrs</h1>
     <ul>
         {% for entry in recent_posts %}
-            <li><h4><a href="{{ entry.link }}">{{ entry.title }}</a></h4>
-                <p>{{ entry.summary|safe }}</p></li>
+            {% include "aggr_app/aggr_post.html" %}
         {% endfor %}
     </ul>
 </section>
