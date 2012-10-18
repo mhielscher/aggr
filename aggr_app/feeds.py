@@ -37,4 +37,7 @@ class AggregateFeed(RSSFeed):
     
     def item_link(self, entry):
         return entry.link
+    
+    def item_pubdate(self, entry):
+        return entry.published
 
