@@ -1,0 +1,32 @@
+section.callout {
+    margin: 0.5em;
+    padding: 0.5em;
+    background-color: #eeeeee;
+    border-radius: 10px;
+}
+
+section.callout h1 {
+    font-size: 1.4em;
+    margin-bottom: 0.5em;
+}
+
+section.callout p {
+    line-height: 1.2em;
+    padding-bottom: 0.5em;
+}
+
+section.callout p.def {
+    font-size: 0.825em;
+}
+
+section.callout div#header {
+    position: relative;
+    top: 0px;
+    left: 0px;
+}
+
+section.callout div#header img.closebox {
+    position: absolute;
+    top: 0px;
+    right: 0px;
+}

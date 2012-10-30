@@ -1,0 +1,41 @@
+div.content {
+    margin-left: 0;
+}
+
+div.content h2 {
+    font-size: 1.4em;
+    padding-left: 0.5em;
+}
+
+div.content h3 {
+    font-size: 1.1em;
+    padding-left: 0.5em;
+}
+
+article.aggr-entry {
+    border-top: 2px solid gray;
+    border-bottom: 2px solid gray;
+    padding-top: 0.5em;
+    padding-bottom: 1em;
+    padding-left: 0.5em;
+    padding-right: 0.5em;
+    background-color: #eaeaea;
+    font-size: 1em;
+}
+
+article.aggr-entry ~ article.aggr-entry {
+    border-top: none;
+}
+
+article.aggr-entry h1 {
+    font-size: 1.1em;
+    font-weight: bold;
+}
+
+article.aggr-entry h2 {
+    font-size: 0.9em;
+}
+
+article.aggr-entry p {
+    font-size: 0.8em;
+}

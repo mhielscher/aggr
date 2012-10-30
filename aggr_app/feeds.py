@@ -2,6 +2,7 @@ from django.contrib.syndication.views import Feed as RSSFeed
 from aggr_app.models import Aggregate
 from django.core.urlresolvers import reverse
 from django.shortcuts import get_object_or_404
+import datetime
 
 class AggregateFeed(RSSFeed):
     def get_object(self, request, aggr_id):
@@ -39,5 +40,5 @@ class AggregateFeed(RSSFeed):
         return entry.link
     
     def item_pubdate(self, entry):
-        return entry.published
+        return datetime.datetime(entry.published_parsed[:6])
 

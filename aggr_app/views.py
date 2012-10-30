@@ -160,7 +160,7 @@ def aggr_detail(request, aggr_id):
     aggr = get_object_or_404(Aggregate, pk=aggr_id)
     if not aggr.is_public and not request.user.is_authenticated():
         return HttpResponseRedirect(reverse('django.contrib.auth.views.login'))
-    if aggr.owner != request.user:
+    if not aggr.is_public and aggr.owner != request.user:
         return HttpResponseRedirect(reverse('aggr_app.views.home')) # temporary
     
     # Authenticated to get this aggr

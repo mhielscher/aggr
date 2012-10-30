@@ -16,7 +16,6 @@ X generate RSS feeds of Aggregates
 X public/private aggregates
 - document
 - test
-- design
 X subscribers to feeds
 - replace non-autoescaping with selective escaping
 - continuous historical data
@@ -35,6 +34,12 @@ Beta:
 - search posts
 - AJAX/single-page support
 - redesign
+
+Design:
+X nav sidebar, anon vs. user
+- basic layout of aggr details, front page(s)
+- better-looking links/buttons ala Udacity
+- jQuery tabs in sidebar
 
 
 Sitemap/Layout

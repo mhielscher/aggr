@@ -150,6 +150,8 @@ class Feed(models.Model):
                     self.cache_expires = timezone.now() + self.minimum_refresh_time
             logger.debug("Setting cache_expires=%s" % (self.cache_expires))
             self.cache = feedparser.parse(response.read())
+            for entry in self.cache.entries:
+                entry['feed'] = self.cache.feed
             self.save()
         else:
             # Some kind of redirect? Write a debug message.
@@ -183,21 +185,6 @@ class Aggregate(models.Model):
     
     def __unicode__(self):
         return self.name
-    
-    # Deprecated, returns duplicates.
-    def get_unfiltered_items(self):
-        """Returns all items in the component feeds, sorted by published timestamp.
-        
-        DEPRECATED
-        """
-        feeds = [f.feed.update_cache() for f in self.feeds.all()]
-        # Add the feed name to each entry for annotation.
-        for feed in feeds:
-            for entry in feed.entries:
-                entry['feed'] = feed.feed
-        self.items = [e for f in feeds for e in f.entries]
-        self.items.sort(key=lambda e: e.get('published_parsed') or e.get('updated_parsed'))
-        return self.items
     
     def apply_filters(self):
         """Compiles filters; returns matching entries."""
